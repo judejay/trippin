@@ -1,7 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { tap } from 'rxjs';
+import {
+  debounceTime,
+  distinct,
+  distinctUntilChanged,
+  switchMap,
+  tap,
+} from 'rxjs';
+import { TrippinService } from '../trippin.service';
 
 @Component({
   selector: 'app-people-list',
@@ -12,5 +19,11 @@ import { tap } from 'rxjs';
 })
 export class PeopleListComponent {
   public nameFilter = new FormControl('');
-  public input$ = this.nameFilter.valueChanges.pipe(tap((f) => console.log(f)));
+  public input$ = this.nameFilter.valueChanges.pipe(
+    debounceTime(1000),
+    distinctUntilChanged(),
+    switchMap((name) => this.trippinService.getPeople(name ?? ''))
+  );
+
+  constructor(private trippinService: TrippinService) {}
 }

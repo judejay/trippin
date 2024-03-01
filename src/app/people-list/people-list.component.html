@@ -9,4 +9,8 @@
   />
 </form>
 
-{{ input$ | async }}
+<ul>
+  <li *ngFor="let person of input$ | async">
+    {{ person }}
+  </li>
+</ul>
